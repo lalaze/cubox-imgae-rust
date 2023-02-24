@@ -56,7 +56,7 @@ pub struct BoxRsp {
 }
 
 #[tokio::main]
-pub async fn get_box(name: String, p:String) -> Result<(), Box<dyn std::error::Error>>   {
+pub async fn get_box(name: String, p:String) -> ()   {
   let client = reqwest::Client::new();
 
   let form = Form::new()
@@ -72,11 +72,16 @@ pub async fn get_box(name: String, p:String) -> Result<(), Box<dyn std::error::E
   let token = json["token"].as_str().unwrap();
 
   // 先写死路径了
-  let res2 = client.post("https://cubox.pro/c/api/v2/search_engine/my?asc=false&page=1&filters=&groupId=ff8080818630434a0186346168e779af&archiving=false")
+  let res2 = client.get("https://cubox.pro/c/api/v2/search_engine/my?asc=false&page=1&filters=&groupId=ff8080818630434a0186346168e779af&archiving=false")
   .headers(utils::construct_headers(token.to_string())).send().await.unwrap();
+  let json_text = res2.text().await.unwrap();
+  let json: Value = serde_json::from_str(&json_text).unwrap();
 
-  let json2: Value = res.json().await.unwrap();
-  let data= json["token"].as_str().unwrap();
+  let page_count =  json.get("pageCount").unwrap();
+
+  // if let Some(data) = json.get("data").and_then(|v| v.as_array()) {
+  //   println!("data: {:?}", data);
+  // }
 
 
   // // vec -> hashmap
@@ -85,5 +90,5 @@ pub async fn get_box(name: String, p:String) -> Result<(), Box<dyn std::error::E
   // }
 
   // Ok(treeTypeMap)
-  Ok(())
+  // Ok(())
 }
