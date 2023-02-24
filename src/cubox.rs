@@ -1,3 +1,5 @@
+use std::os::unix::net::UnixDatagram;
+
 use serde::{Deserialize, Serialize};
 use reqwest::multipart::{Form, Part};
 use serde_json::Value;
@@ -54,7 +56,7 @@ pub struct BoxRsp {
 }
 
 #[tokio::main]
-pub async fn get_box(name: String, p:String) ->  Result<(), Box<dyn std::error::Error>>   {
+pub async fn get_box(name: String, p:String) -> Result<(), Box<dyn std::error::Error>>   {
   let client = reqwest::Client::new();
 
   let form = Form::new()
@@ -63,13 +65,19 @@ pub async fn get_box(name: String, p:String) ->  Result<(), Box<dyn std::error::
   
   let res =
     client.post("https://cubox.pro/c/api/login")
-    .multipart(form).send().await?;
+    .multipart(form).send().await.unwrap();
   
-  let json_value: Value = res.json().await?;
+  let json: Value = res.json().await.unwrap();
 
-  print!("{:?}", json_value);
+  let token = json["token"].as_str().unwrap();
 
-  // let mut treeTypeMap = HashMap::new();
+  // 先写死路径了
+  let res2 = client.post("https://cubox.pro/c/api/v2/search_engine/my?asc=false&page=1&filters=&groupId=ff8080818630434a0186346168e779af&archiving=false")
+  .headers(utils::construct_headers(token.to_string())).send().await.unwrap();
+
+  let json2: Value = res.json().await.unwrap();
+  let data= json["token"].as_str().unwrap();
+
 
   // // vec -> hashmap
   // for x in json_value.iter() {
