@@ -1,8 +1,10 @@
-use std::os::unix::net::UnixDatagram;
-
 use serde::{Deserialize, Serialize};
 use reqwest::multipart::{Form, Part};
 use serde_json::Value;
+use uuid::Uuid;
+use std::fs::File;
+use std::io::copy;
+use std::path::Path;
 mod utils;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -55,6 +57,22 @@ pub struct BoxRsp {
   data: Vec<Box>
 }
 
+pub async fn get_img(data: &Vec<Value>) -> () {
+  let client = reqwest::Client::new();
+  for x in data.iter() {
+    let url = x.as_object().unwrap().get("targetURL").unwrap().as_str().unwrap();
+    let filename = format!(r#"./file/{}"#, Uuid::new_v4().to_string());
+
+    let res = client.get(url).send().await.unwrap();
+
+    if res.status().is_success() {
+      let mut dest_file = File::create(&Path::new(&filename)).unwrap();
+      copy(&mut res.bytes().await.unwrap().as_ref(), &mut dest_file).unwrap();
+    }
+
+  }
+}
+
 #[tokio::main]
 pub async fn get_box(name: String, p:String) -> ()   {
   let client = reqwest::Client::new();
@@ -77,12 +95,23 @@ pub async fn get_box(name: String, p:String) -> ()   {
   let json_text = res2.text().await.unwrap();
   let json: Value = serde_json::from_str(&json_text).unwrap();
 
-  let page_count =  json.get("pageCount").unwrap();
+  let page_count =  json.get("pageCount").unwrap().as_u64().unwrap();
 
-  // if let Some(data) = json.get("data").and_then(|v| v.as_array()) {
-  //   println!("data: {:?}", data);
+  let data = json.get("data").unwrap().as_array().unwrap();
+
+  get_img(data).await;
+
+  // if page_count > 1 {
+  //   for i in 0..page_count {
+  //     if (i != 0) {
+  //       let url = format!(r#"https://cubox.pro/c/api/v2/search_engine/my?asc=false&page={}&filters=&groupId=ff8080818630434a0186346168e779af&archiving=false"#, i+1);
+  //       let res = client.get(url).headers(utils::construct_headers(token.to_string())).send().await.unwrap();
+  //       let json_text = res.text().await.unwrap();
+  //       let json: Value = serde_json::from_str(&json_text).unwrap();
+  //       let data2 = json.get("data").unwrap().as_array().unwrap();
+  //     }
+  //   }
   // }
-
 
   // // vec -> hashmap
   // for x in json_value.iter() {
