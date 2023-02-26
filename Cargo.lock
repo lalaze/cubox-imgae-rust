@@ -98,6 +98,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 
 [[package]]
+name = "cubox-image"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "json",
+ "reqwest",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "encoding_rs"
 version = "0.8.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -699,17 +710,6 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "winreg",
-]
-
-[[package]]
-name = "rust-template"
-version = "0.1.0"
-dependencies = [
- "clap",
- "json",
- "reqwest",
- "serde_json",
- "tokio",
 ]
 
 [[package]]
