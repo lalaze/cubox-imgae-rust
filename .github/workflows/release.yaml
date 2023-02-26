@@ -1,5 +1,7 @@
 name: Releast
 
+runs-on: self-hosted
+
 on:
   push:
     tags:
