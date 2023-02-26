@@ -4,7 +4,6 @@ use serde_json::Value;
 use std::fs::File;
 use std::io::copy;
 use std::path::Path;
-use std::time::Duration;
 mod utils;
 
 fn check_file_exixt(url: &String) -> bool {
@@ -14,7 +13,6 @@ fn check_file_exixt(url: &String) -> bool {
 
 pub async fn get_img(data: &Vec<Value>, f: &String) -> () {
   let client = ClientBuilder::new().referer(false).build().unwrap();
-  let interval = Duration::from_secs(1); 
   for x in data.iter() {
     let url = x.as_object().unwrap().get("targetURL").unwrap().as_str().unwrap();
     let parts: Vec<&str> = url.split('/').collect();
