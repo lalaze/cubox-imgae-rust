@@ -1,7 +1,5 @@
 name: Releast
 
-runs-on: self-hosted
-
 on:
   push:
     tags:
@@ -10,7 +8,7 @@ on:
 jobs:
   release:
     name: release ${{ matrix.target }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
       matrix:
