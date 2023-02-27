@@ -22,7 +22,7 @@ jobs:
           override: true
 
       - name: Build
-        run: cargo build --all --release && strip target/release/cubox-image && mv target/release/cubox-image target/release/cubox-image_amd64
+        run: cargo build --all --release --target=x86_64-unknown-linux-musl && strip target/x86_64-unknown-linux-musl/cubox-image && mv target/x86_64-unknown-linux-musl/cubox-image target/x86_64-unknown-linux-musl/cubox-image_amd64
 
       - name: Release
         uses: softprops/action-gh-release@v1
