@@ -23,6 +23,9 @@ jobs:
       
       - name: Install musl
         run: rustup target add x86_64-unknown-linux-musl
+        run: apt-get update
+        run: apt-get install musl-tools -y
+        run: apt-get -y install pkg-config libssl-dev
 
       - name: Build
         run: cargo build --all --release --target=x86_64-unknown-linux-musl && strip target/x86_64-unknown-linux-musl/cubox-image && mv target/x86_64-unknown-linux-musl/cubox-image target/x86_64-unknown-linux-musl/cubox-image_amd64
