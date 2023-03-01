@@ -20,6 +20,9 @@ jobs:
           toolchain: stable
           default: true
           override: true
+      
+      - name: Install musl
+        run: rustup target add x86_64-unknown-linux-musl
 
       - name: Build
         run: cargo build --all --release --target=x86_64-unknown-linux-musl && strip target/x86_64-unknown-linux-musl/cubox-image && mv target/x86_64-unknown-linux-musl/cubox-image target/x86_64-unknown-linux-musl/cubox-image_amd64
