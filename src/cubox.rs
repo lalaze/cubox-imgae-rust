@@ -25,6 +25,9 @@ pub async fn get_img(data: &Vec<Value>, f: &String) -> () {
     } else {
       filename = format!(r#"{}/{}"#, f, file_last);
     };
+    if !filename.contains("jpeg") & !filename.contains("jpg") {
+      filename = format!(r#"{}.jpeg"#, filename)
+    }
     if !check_file_exixt(&filename) {
       let res = client.get(url).headers(utils::construct_headers2()).send().await.unwrap();
       let mut dest_file: File;
