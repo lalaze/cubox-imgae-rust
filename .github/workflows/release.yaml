@@ -34,13 +34,13 @@ jobs:
         run: sudo apt-get -y install pkg-config libssl-dev
 
       - name: Build
-        run: cargo build --all --release --target=x86_64-unknown-linux-musl && strip target/x86_64-unknown-linux-musl/cubox-image && mv target/x86_64-unknown-linux-musl/cubox-image target/x86_64-unknown-linux-musl/cubox-image_amd64
+        run: cargo build --all --release --target=x86_64-unknown-linux-musl
 
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            target/release/cubox-image_amd64
+            target/x86_64-unknown-linux-musl/release/cubox-image
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
