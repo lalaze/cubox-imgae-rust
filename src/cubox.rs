@@ -32,7 +32,7 @@ pub async fn get_img(data: &Vec<Value>, f: &String) -> () {
     if !check_file_exixt(&filename) {
       let res = client.get(proxy_url).headers(utils::construct_headers2()).send().await.unwrap();
       let mut dest_file: File;
-
+      print!("{:?}", url);
       if res.status().is_success() {
         dest_file = File::create(&Path::new(&filename)).unwrap();
         copy(&mut res.bytes().await.unwrap().as_ref(), &mut dest_file).unwrap();
