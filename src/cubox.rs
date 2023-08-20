@@ -4,6 +4,7 @@ use serde_json::Value;
 use std::fs::File;
 use std::io::copy;
 use std::path::Path;
+use std::str::FromStr;
 mod utils;
 
 fn check_file_exixt(url: &String) -> bool {
@@ -28,17 +29,21 @@ pub async fn get_img(data: &Vec<Value>, f: &String) -> () {
     if !filename.contains("jpeg") & !filename.contains("jpg") {
       filename = format!(r#"{}.jpeg"#, filename)
     }
-    let proxy_url = format!("https://images.weserv.nl/{}", url);
+    let mut proxy_url = String::from_str(url).unwrap();
+    // 500px要用代理过
+    if (proxy_url.contains("500px")) {
+      proxy_url = format!("https://images.weserv.nl?url={}", url);
+    }
     if !check_file_exixt(&filename) {
-      let res = client.get(proxy_url).headers(utils::construct_headers2()).send().await.unwrap();
+      let res = client.get(proxy_url.clone()).headers(utils::construct_headers2()).send().await.unwrap();
       let mut dest_file: File;
-      print!("{:?}", url);
       if res.status().is_success() {
         dest_file = File::create(&Path::new(&filename)).unwrap();
         copy(&mut res.bytes().await.unwrap().as_ref(), &mut dest_file).unwrap();
       } else {
+        print!("{}", res.status());
         print!("{:?}", "error");
-        print!("{:?}", url);
+        print!("{:?}", proxy_url);
         print!("{}", "\n");
       }
     } else {
