@@ -28,8 +28,9 @@ pub async fn get_img(data: &Vec<Value>, f: &String) -> () {
     if !filename.contains("jpeg") & !filename.contains("jpg") {
       filename = format!(r#"{}.jpeg"#, filename)
     }
+    let proxy_url = format!("https://images.weserv.nl/{}", url);
     if !check_file_exixt(&filename) {
-      let res = client.get(url).headers(utils::construct_headers2()).send().await.unwrap();
+      let res = client.get(proxy_url).headers(utils::construct_headers2()).send().await.unwrap();
       let mut dest_file: File;
 
       if res.status().is_success() {
